@@ -252,6 +252,47 @@ gem sources -l
 </details>
 
 <details>
+<summary><strong>CPAN (Perl)</strong></summary>
+<div class="mirror-section">
+  <div class="command-container">
+  <pre><code class="language-shell"># 进入 CPAN Shell
+cpan
+
+# 在 shell 中设置 urllist
+o conf urllist https://mirrors.tsaitang.com/language/cpan/
+o conf commit
+</code></pre>
+  </div>
+</div>
+</details>
+
+<details>
+<summary><strong>CTAN (TeX)</strong></summary>
+<div class="mirror-section">
+  <div class="command-container">
+  <pre><code class="language-shell"># tlmgr 示例（可按地区选择镜像）
+tlmgr option repository https://mirrors.tsaitang.com/language/ctan/systems/texlive/tlnet
+tlmgr update --self --all
+</code></pre>
+  </div>
+</div>
+</details>
+
+<details>
+<summary><strong>Julia</strong></summary>
+<div class="mirror-section">
+  <div class="command-container">
+  <pre><code class="language-shell"># 临时设置 Julia 包服务器
+export JULIA_PKG_SERVER=https://mirrors.tsaitang.com/language/julia/
+
+# 添加/安装包
+julia -e 'using Pkg; Pkg.add("IJulia")'
+</code></pre>
+  </div>
+</div>
+</details>
+
+<details>
 <summary><strong>CentOS</strong></summary>
 <div class="mirror-section">
   <div class="command-container">
@@ -384,6 +425,84 @@ sudo zypper ar -fc https://mirrors.tsaitang.com/system/opensuse/distribution/lea
 sudo zypper ar -fc https://mirrors.tsaitang.com/system/opensuse/distribution/leap/\$releasever/repo/non-oss mirrors-non-oss
 sudo zypper ar -fc https://mirrors.tsaitang.com/system/opensuse/update/leap/\$releasever/oss mirrors-update
 sudo zypper ar -fc https://mirrors.tsaitang.com/system/opensuse/update/leap/\$releasever/non-oss mirrors-update-non-oss
+</code></pre>
+  </div>
+</div>
+</details>
+
+<details>
+<summary><strong>Kali Linux</strong></summary>
+<div class="mirror-section">
+  <div class="command-container">
+  <pre><code class="language-shell"># /etc/apt/sources.list 示例
+deb https://mirrors.tsaitang.com/system/kali kali-rolling main contrib non-free non-free-firmware
+
+sudo apt update
+</code></pre>
+  </div>
+</div>
+</details>
+
+<details>
+<summary><strong>Raspbian</strong></summary>
+<div class="mirror-section">
+  <div class="command-container">
+  <pre><code class="language-shell"># 替换 raspbian 源
+sudo sed -i 's|http://archive.raspbian.org/raspbian|https://mirrors.tsaitang.com/system/raspbian|g' /etc/apt/sources.list
+sudo apt update
+</code></pre>
+  </div>
+</div>
+</details>
+
+<details>
+<summary><strong>Gentoo</strong></summary>
+<div class="mirror-section">
+  <div class="command-container">
+  <pre><code class="language-shell"># /etc/portage/make.conf 示例
+GENTOO_MIRRORS="https://mirrors.tsaitang.com/system/gentoo/"
+
+emaint sync --repo gentoo
+</code></pre>
+  </div>
+</div>
+</details>
+
+<details>
+<summary><strong>FreeBSD</strong></summary>
+<div class="mirror-section">
+  <div class="command-container">
+  <pre><code class="language-shell"># /etc/pkg/FreeBSD.conf 示例
+url: "pkg+https://mirrors.tsaitang.com/system/freebsd/\${ABI}/quarterly"
+
+sudo pkg update -f
+</code></pre>
+  </div>
+</div>
+</details>
+
+<details>
+<summary><strong>OpenBSD</strong></summary>
+<div class="mirror-section">
+  <div class="command-container">
+  <pre><code class="language-shell"># /etc/installurl 设置为
+https://mirrors.tsaitang.com/system/openbsd/
+
+# 或 pkg_add 指定仓库
+PKG_PATH=https://mirrors.tsaitang.com/system/openbsd/$(uname -r)/packages/$(machine -a)/
+</code></pre>
+  </div>
+</div>
+</details>
+
+<details>
+<summary><strong>Void Linux</strong></summary>
+<div class="mirror-section">
+  <div class="command-container">
+  <pre><code class="language-shell"># /etc/xbps.d/00-repository-main.conf 示例
+repository=https://mirrors.tsaitang.com/system/void/current
+
+sudo xbps-install -S
 </code></pre>
   </div>
 </div>
@@ -706,9 +825,10 @@ const proxyMap = [
 
 async function handleRequest(request) {
   const url = new URL(request.url);
+  const isLocalDevHost = url.hostname === '127.0.0.1' || url.hostname === 'localhost' || url.hostname === '::1';
 
   // HTTP 跳转到 HTTPS
-  if (url.protocol === 'http:') {
+  if (url.protocol === 'http:' && !isLocalDevHost) {
     url.protocol = 'https:';
     return Response.redirect(url.toString(), 301);
   }

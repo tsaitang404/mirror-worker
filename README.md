@@ -30,6 +30,18 @@ README.md             # 使用文档
    npx wrangler deploy
    ```
 
+## 测试
+
+### 集成测试（镜像地址 API 校验）
+```sh
+node --test tests/integration/mirror-api.test.mjs
+```
+
+覆盖检查项：
+- 首页 `GET /` 返回 200 且包含导航内容。
+- 未知路径返回 404。
+- 关键镜像地址（NPM、Ubuntu、Docker Registry、Anaconda）返回非 5xx，且命中代理路由。
+
 ## 主要路径说明
 - 首页：`https://mirror.tsaitang.workers.dev/`
 - PyPI 镜像：`https://mirror.tsaitang.workers.dev/language/pypi/simple/pip/`
@@ -39,6 +51,58 @@ README.md             # 使用文档
 - CentOS 镜像：`https://mirror.tsaitang.workers.dev/system/centos/7.9.2009/os/x86_64/`
 - Ubuntu 镜像：`https://mirror.tsaitang.workers.dev/system/ubuntu/`
 - Alpine 镜像：`https://mirror.tsaitang.workers.dev/system/alpine/`
+
+## 当前支持的镜像列表（与 `proxyMap` 同步）
+
+### 语言包管理器（`/language/*`）
+- `pypi`：`/language/pypi/`
+- `npm`：`/language/npm/`
+- `maven`：`/language/maven/`
+- `gradle`：`/language/gradle/`
+- `composer`：`/language/composer/`
+- `cargo`：`/language/cargo/`
+- `rubygems`：`/language/rubygems/`
+- `cpan`：`/language/cpan/`
+- `ctan`：`/language/ctan/`
+- `julia`：`/language/julia/`
+
+### 操作系统（`/system/*`）
+- `centos`：`/system/centos/`
+- `centos-stream`：`/system/centos-stream/`
+- `ubuntu`：`/system/ubuntu/`
+- `debian`：`/system/debian/`
+- `alpine`：`/system/alpine/`
+- `archlinux`：`/system/archlinux/`
+- `arch4edu`：`/system/arch4edu/`
+- `blackarch`：`/system/blackarch/`
+- `fedora`：`/system/fedora/`
+- `opensuse`：`/system/opensuse/`
+- `kali`：`/system/kali/`
+- `raspbian`：`/system/raspbian/`
+- `gentoo`：`/system/gentoo/`
+- `freebsd`：`/system/freebsd/`
+- `openbsd`：`/system/openbsd/`
+- `void`：`/system/void/`
+- `rocky`：`/system/rocky/`
+- `almalinux`：`/system/almalinux/`
+
+### 容器与虚拟化（`/container/*`）
+- `docker`：`/container/docker/`
+- `dockerhub`：`/container/dockerhub/`
+- `gcr`：`/container/gcr/`
+- `quay`：`/container/quay/`
+- `k8s`：`/container/k8s/`
+- `ghcr`：`/container/ghcr/`
+
+### 工具（`/tool/*`）
+- `homebrew`：`/tool/homebrew/`
+- `anaconda`：`/tool/anaconda/`
+- `flutter`：`/tool/flutter/`
+- `winget`：`/tool/winget/`
+- `chocolatey`：`/tool/chocolatey/`
+- `scoop`：`/tool/scoop/`
+- `msys2`：`/tool/msys2/`
+- `cygwin`：`/tool/cygwin/`
 
 ## 换源示例
 
