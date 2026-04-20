@@ -785,7 +785,7 @@ const proxyMap = [
   { prefix: '/language/julia/', target: 'https://pkg.julialang.org', host: 'pkg.julialang.org', sni: true },
   
   // 系统类镜像源
-  { prefix: '/system/centos/', target: 'http://vault.centos.org', host: 'vault.centos.org' },
+  { prefix: '/system/centos/', target: 'https://archive.kernel.org/centos-vault', host: 'archive.kernel.org', sni: true, normalize: 'centos' },
   { prefix: '/system/centos-stream/', target: 'http://mirror.stream.centos.org', host: 'mirror.stream.centos.org' },
   { prefix: '/system/ubuntu/', target: 'http://archive.ubuntu.com', host: 'archive.ubuntu.com' },
   { prefix: '/system/debian/', target: 'http://deb.debian.org', host: 'deb.debian.org' },
@@ -848,7 +848,8 @@ async function handleRequest(request) {
   for (const rule of proxyMap) {
     if (url.pathname.startsWith(rule.prefix)) {
       // 拼接目标 URL（确保域名与路径之间只有一个斜杠）
-      const suffix = url.pathname.slice(rule.prefix.length);
+      const rawSuffix = url.pathname.slice(rule.prefix.length);
+      const suffix = normalizePathSuffix(rawSuffix, rule);
       const base = rule.target.replace(/\/$/, '');
       const targetUrl = `${base}/${suffix}${url.search}`;
       return await proxy(request, targetUrl, rule);
@@ -864,6 +865,22 @@ async function handleRequest(request) {
       'Access-Control-Allow-Origin': '*'
     }
   });
+}
+
+function normalizePathSuffix(suffix, rule) {
+  if (rule.normalize !== 'centos') {
+    return suffix;
+  }
+
+  // 兼容旧配置中重复的 /centos 前缀。
+  let normalized = suffix.replace(/^centos\//, '');
+
+  // 将 CentOS 7 统一映射到可用的 7.9.2009 目录。
+  if (normalized.startsWith('7/')) {
+    normalized = `7.9.2009/${normalized.slice(2)}`;
+  }
+
+  return normalized;
 }
 
 // 代理函数
