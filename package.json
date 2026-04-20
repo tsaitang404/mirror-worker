@@ -1,0 +1,12 @@
+{
+  "name": "mirror-worker",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Cloudflare Worker mirror proxy",
+  "scripts": {
+    "test:integration": "node --test tests/integration/mirror-api.test.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "4.73.0"
+  }
+}

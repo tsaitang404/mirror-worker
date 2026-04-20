@@ -6,11 +6,12 @@ import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
 const BASE_URL = 'http://127.0.0.1:8787';
-const STARTUP_TIMEOUT_MS = 45_000;
+const STARTUP_TIMEOUT_MS = 120_000;
 const POLL_INTERVAL_MS = 1_000;
 const CURRENT_FILE = fileURLToPath(import.meta.url);
 const CURRENT_DIR = dirname(CURRENT_FILE);
 const WORKER_FILE = resolve(CURRENT_DIR, '../../mirror-worker.js');
+const WRANGLER_BIN = resolve(CURRENT_DIR, '../../node_modules/.bin/wrangler');
 
 /** @type {import('node:child_process').ChildProcess | undefined} */
 let workerProcess;
@@ -71,8 +72,8 @@ async function getSupportedPrefixes() {
 
 before(async () => {
   workerProcess = spawn(
-    'npx',
-    ['-y', 'wrangler@4.73.0', 'dev', '--local', '--port', '8787', '--ip', '127.0.0.1'],
+    WRANGLER_BIN,
+    ['dev', '--local', '--port', '8787', '--ip', '127.0.0.1'],
     {
       stdio: 'pipe',
       env: {
@@ -82,11 +83,11 @@ before(async () => {
     }
   );
 
-  workerProcess.stderr?.on('data', () => {
-    // 保持 stderr 被消费，避免缓冲区阻塞。
+  workerProcess.stderr?.on('data', (chunk) => {
+    process.stderr.write(chunk);
   });
-  workerProcess.stdout?.on('data', () => {
-    // 保持 stdout 被消费，避免缓冲区阻塞。
+  workerProcess.stdout?.on('data', (chunk) => {
+    process.stdout.write(chunk);
   });
 
   await waitForWorkerReady();

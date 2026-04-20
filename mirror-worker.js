@@ -847,8 +847,10 @@ async function handleRequest(request) {
   // 代理分发
   for (const rule of proxyMap) {
     if (url.pathname.startsWith(rule.prefix)) {
-      // 拼接目标 URL
-      const targetUrl = rule.target + url.pathname.slice(rule.prefix.length) + url.search;
+      // 拼接目标 URL（确保域名与路径之间只有一个斜杠）
+      const suffix = url.pathname.slice(rule.prefix.length);
+      const base = rule.target.replace(/\/$/, '');
+      const targetUrl = `${base}/${suffix}${url.search}`;
       return await proxy(request, targetUrl, rule);
     }
   }
